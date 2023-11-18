@@ -92,9 +92,9 @@ action:
                   transition: 1
       # Light off
       - conditions:
-          - "{{ command == 'off_press' }}"
-          - "{{ cluster_id == 64512 }}"
-          - "{{ endpoint_id == 2 }}"
+          - "{{ command == 'off_with_effect' }}"
+          - "{{ cluster_id == 6 }}"
+          - "{{ endpoint_id == 1 }}"
         sequence:
           - service: light.turn_off
             target: !input light
@@ -106,11 +106,25 @@ action:
           - "{{ cluster_id == 8 }}"
           - "{{ endpoint_id == 1 }}"
           - "{{ trigger.event.data.params.step_mode == 0 }}"
+          - "{{ trigger.event.data.params.step_size == 30 }}"
         sequence:
           - service: light.turn_on
             target: !input light
             data:
               brightness_step_pct: 10
+              transition: 1
+      # Brightness up, hold
+      - conditions:
+          - "{{ command == 'step' }}"
+          - "{{ cluster_id == 8 }}"
+          - "{{ endpoint_id == 1 }}"
+          - "{{ trigger.event.data.params.step_mode == 0 }}"
+          - "{{ trigger.event.data.params.step_size == 56 }}"
+        sequence:
+          - service: light.turn_on
+            target: !input light
+            data:
+              brightness_step_pct: 25
               transition: 1
       # Brightness down
       - conditions:
@@ -118,9 +132,23 @@ action:
           - "{{ cluster_id == 8 }}"
           - "{{ endpoint_id == 1 }}"
           - "{{ trigger.event.data.params.step_mode == 1 }}"
+          - "{{ trigger.event.data.params.step_size == 30 }}"
         sequence:
           - service: light.turn_on
             target: !input light
             data:
               brightness_step_pct: -10
+              transition: 1
+      # Brightness down, hold
+      - conditions:
+          - "{{ command == 'step' }}"
+          - "{{ cluster_id == 8 }}"
+          - "{{ endpoint_id == 1 }}"
+          - "{{ trigger.event.data.params.step_mode == 1 }}"
+          - "{{ trigger.event.data.params.step_size == 56 }}"
+        sequence:
+          - service: light.turn_on
+            target: !input light
+            data:
+              brightness_step_pct: -25
               transition: 1
