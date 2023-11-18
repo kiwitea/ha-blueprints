@@ -118,7 +118,9 @@ action:
           - "{{ cluster_id == 8 }}"
           - "{{ endpoint_id == 1 }}"
           - "{{ trigger.event.data.params.step_mode == 0 }}"
-          - "{{ trigger.event.data.params.step_size == 56 }}"
+          - or:
+              - "{{ trigger.event.data.params.step_size == 56 }}"
+              - "{{ trigger.event.data.params.step_size == 63 }}"
         sequence:
           - service: light.turn_on
             target: !input light
@@ -144,7 +146,9 @@ action:
           - "{{ cluster_id == 8 }}"
           - "{{ endpoint_id == 1 }}"
           - "{{ trigger.event.data.params.step_mode == 1 }}"
-          - "{{ trigger.event.data.params.step_size == 56 }}"
+          - or:
+              - "{{ trigger.event.data.params.step_size == 56 }}"
+              - "{{ trigger.event.data.params.step_size == 63 }}"
         sequence:
           - service: light.turn_on
             target: !input light
