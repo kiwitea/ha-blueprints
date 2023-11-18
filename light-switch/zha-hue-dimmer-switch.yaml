@@ -55,7 +55,7 @@ blueprint:
           mode: slider
           step: 1.0
           unit_of_measurement: "%"
-  source_url: https://community.home-assistant.io/t/zha-philips-hue-dimmer-switch-rwl020-rwl021/255048
+  source_url: https://github.com/kiwitea/ha-blueprints/blob/main/light-switch/zha-hue-dimmer-switch.yaml
 mode: restart
 max_exceeded: silent
 variables:
