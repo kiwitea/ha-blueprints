@@ -81,7 +81,7 @@ action:
       command: "{{ trigger.event.data.command }}"
       cluster_id: "{{ trigger.event.data.cluster_id }}"
       endpoint_id: "{{ trigger.event.data.endpoint_id }}"
-      cur_brightness: '{{ state_attr(light.entity_id, ''brightness'') | int }}'
+      cur_brightness: '{{ state_attr(light.entity_id, ''brightness'') | int(0) }}'
   - choose:
       # Light on
       - conditions:
