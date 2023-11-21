@@ -54,11 +54,23 @@ blueprint:
           mode: slider
           step: 1.0
           unit_of_measurement: "%"
+    min_brightness:
+      name: Min Brightness
+      description: Minimum brightness of the light(s) when dimming
+      default: 1
+      selector:
+        number:
+          min: 0
+          max: 255
+          mode: slider
+          step: 1
   source_url: https://github.com/kiwitea/ha-blueprints/blob/main/light-switch/zha-hue-dimmer-switch.yaml
 mode: restart
 max_exceeded: silent
 variables:
-  force_brightness: !input force_brightness
+  light: !input 'light'
+  force_brightness: !input 'force_brightness'
+  min_brightness: !input 'min_brightness'
 trigger:
   - platform: event
     event_type: zha_event
@@ -69,6 +81,7 @@ action:
       command: "{{ trigger.event.data.command }}"
       cluster_id: "{{ trigger.event.data.cluster_id }}"
       endpoint_id: "{{ trigger.event.data.endpoint_id }}"
+      cur_brightness: '{{ state_attr(light.entity_id, ''brightness'') | int }}'
   - choose:
       # Light on
       - conditions:
@@ -110,7 +123,7 @@ action:
           - service: light.turn_on
             target: !input light
             data:
-              brightness_step_pct: 10
+              brightness_step: 25
               transition: 1
       # Brightness up, hold
       - conditions:
@@ -125,7 +138,7 @@ action:
           - service: light.turn_on
             target: !input light
             data:
-              brightness_step_pct: 25
+              brightness_step_pct: 50
               transition: 1
       # Brightness down
       - conditions:
@@ -135,11 +148,20 @@ action:
           - "{{ trigger.event.data.params.step_mode == 1 }}"
           - "{{ trigger.event.data.params.step_size == 30 }}"
         sequence:
-          - service: light.turn_on
-            target: !input light
-            data:
-              brightness_step_pct: -10
-              transition: 1
+          - choose:
+            - conditions: '{{ (cur_brightness - 25) >= min_brightness }}'
+              sequence:
+              - service: light.turn_on
+                target: !input light
+                data:
+                  brightness_step: -25
+                  transition: 1
+            default:
+            - service: light.turn_on
+              target: !input 'light'
+              data:
+                transition: 1
+                brightness: !input 'min_brightness'
       # Brightness down, hold
       - conditions:
           - "{{ command == 'step' }}"
@@ -150,8 +172,16 @@ action:
               - "{{ trigger.event.data.params.step_size == 56 }}"
               - "{{ trigger.event.data.params.step_size == 63 }}"
         sequence:
-          - service: light.turn_on
-            target: !input light
-            data:
-              brightness_step_pct: -25
-              transition: 1
+          - choose:
+            - conditions: '{{ (cur_brightness - 50) >= min_brightness }}'
+              - service: light.turn_on
+                target: !input light
+                data:
+                  brightness_step: -50
+                  transition: 1
+            default:
+            - service: light.turn_on
+              target: !input 'light'
+              data:
+                transition: 1
+                brightness: !input 'min_brightness'
