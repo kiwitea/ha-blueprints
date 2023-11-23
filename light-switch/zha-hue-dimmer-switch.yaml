@@ -205,7 +205,7 @@ action:
         sequence:
           - service: input_select.select_next
             target: 
-              entity_id: "{{ scene_selector }}"
+              entity_id: "{{ scene_selector.entity_id }}"
           - service: scene.turn_on
             target:
-              entity_id: "scene.{{ states(scene_selector) }}"
+              entity_id: "scene.{{ states(scene_selector.entity_id) }}"
