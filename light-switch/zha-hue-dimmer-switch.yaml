@@ -204,7 +204,8 @@ action:
         - "{{ scene_selector != null }}"
         sequence:
           - service: input_select.select_next
-            target: scene_selector
+            target: 
+              entity_id: "{{ scene_selector }}"
           - service: scene.turn_on
             target:
               entity_id: "scene.{{ states(scene_selector) }}"
