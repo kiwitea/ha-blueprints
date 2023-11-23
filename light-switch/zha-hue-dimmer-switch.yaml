@@ -35,6 +35,15 @@ blueprint:
           entity:
             - domain:
                 - light
+    scene_selector:
+      name: Input scene selector
+      description: Input (helper) of type select/dropdown holding the light's available scene names
+      selector:
+        target:
+          entity:
+            - domain:
+              - input_select
+      default: null
     force_brightness:
       name: Force turn on brightness
       description:
@@ -69,6 +78,7 @@ mode: restart
 max_exceeded: silent
 variables:
   light: !input 'light'  # FIXME: fails when user selected area or device instead of entity
+  scene_selector: !input 'scene_selector'
   force_brightness: !input 'force_brightness'
   min_brightness: !input 'min_brightness'
 trigger:
@@ -186,3 +196,15 @@ action:
               data:
                 transition: 1
                 brightness: !input 'min_brightness'
+      # Cycle through predefined scenes
+      - conditions:
+        - "{{ command == 'recall' }}"
+        - "{{ cluster_id == 5 }}"
+        - "{{ endpoint_id == 1 }}"
+        - "{{ scene_selector != null }}"
+        sequence:
+          - service: input_select.select_next
+            target: scene_selector
+          - service: scene.turn_on
+            target:
+              entity_id: "scene.{{ states(scene_selector) }}"
