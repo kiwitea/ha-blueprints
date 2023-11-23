@@ -68,7 +68,7 @@ blueprint:
 mode: restart
 max_exceeded: silent
 variables:
-  light: !input 'light'
+  light: !input 'light'  # FIXME: fails when user selected area or device instead of entity
   force_brightness: !input 'force_brightness'
   min_brightness: !input 'min_brightness'
 trigger:
