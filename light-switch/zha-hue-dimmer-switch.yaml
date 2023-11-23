@@ -57,7 +57,7 @@ blueprint:
     min_brightness:
       name: Min Brightness
       description: Minimum brightness of the light(s) when dimming
-      default: 1
+      default: 5
       selector:
         number:
           min: 0
