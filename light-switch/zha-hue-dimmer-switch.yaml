@@ -209,3 +209,5 @@ action:
           - service: scene.turn_on
             target:
               entity_id: "scene.{{ states(scene_selector.entity_id) }}"
+            data:
+              transition: 1
