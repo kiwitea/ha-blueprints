@@ -35,6 +35,14 @@ blueprint:
           entity:
             - domain:
                 - light
+    light_group:
+      name: Light group
+      description: Group of lights to switch off on long press 'off'
+      selector:
+        target:
+          entity:
+            - domain:
+              - light
     scene_selector:
       name: Input scene selector
       description: Input (helper) of type select/dropdown holding the light's available scene names
@@ -78,6 +86,7 @@ mode: restart
 max_exceeded: silent
 variables:
   light: !input 'light'  # FIXME: fails when user selected area or device instead of entity
+  light_group: !input 'light_group'
   scene_selector: !input 'scene_selector'
   force_brightness: !input 'force_brightness'
   min_brightness: !input 'min_brightness'
@@ -120,6 +129,16 @@ action:
         sequence:
           - service: light.turn_off
             target: !input light
+            data:
+              transition: 1
+      # All lights off on long hold off
+      - conditions:
+          - "{{ command == 'on_long_release' }}"
+          - "{{ cluster_id == 64512 }}"
+          - "{{ endpoint_id == 1 }}"
+        sequence:
+          - service: light_group.turn_off
+            target: !input light_group
             data:
               transition: 1
       # Brightness up
