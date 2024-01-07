@@ -41,8 +41,8 @@ blueprint:
       selector:
         target:
           entity:
-            - domain:
-              - light
+            - domain: light
+      default: {}
     scene_selector:
       name: Input scene selector
       description: Input (helper) of type select/dropdown holding the light's available scene names
@@ -136,8 +136,9 @@ action:
           - "{{ command == 'on_long_release' }}"
           - "{{ cluster_id == 64512 }}"
           - "{{ endpoint_id == 1 }}"
+          - "{{ light_group | length > 0 }}"
         sequence:
-          - service: light_group.turn_off
+          - service: homeassistant.turn_off
             target: !input light_group
             data:
               transition: 1
